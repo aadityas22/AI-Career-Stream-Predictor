@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PathFinder AI | Career Predictor</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
 <header class="navbar">
@@ -19,27 +17,25 @@
 
     <section class="hero">
         <span class="tag">AI-POWERED CAREER GUIDANCE</span>
-
         <h1>Discover Your <span>Future Path.</span></h1>
-
         <p>
-            Your academic strengths and personal abilities can help
-            you explore the right academic stream.
-            Let our Machine Learning model guide your next step.
+            Explore your academic strengths, interests and abilities
+            using our Machine Learning career prediction system.
         </p>
     </section>
 
     <section class="form-card">
 
-        <div class="section-heading">
-            <span class="number">01</span>
-            <div>
-                <h2>Academic Performance</h2>
-                <p>Enter your Grade 10 subject scores out of 100.</p>
-            </div>
-        </div>
+        <form action="/predict" method="POST"
+              onsubmit="return calculateAptitude()">
 
-        <form action="/predict" method="POST">
+            <div class="section-heading">
+                <span class="number">01</span>
+                <div>
+                    <h2>Academic Performance</h2>
+                    <p>Enter your Grade 10 marks out of 100.</p>
+                </div>
+            </div>
 
             <div class="input-grid">
 
@@ -59,15 +55,9 @@
                 {% for field, label in fields %}
                 <div class="input-group">
                     <label for="{{ field }}">{{ label }}</label>
-                    <input
-                        type="number"
-                        id="{{ field }}"
-                        name="{{ field }}"
-                        min="0"
-                        max="100"
-                        placeholder="Enter marks"
-                        required
-                    >
+                    <input type="number" id="{{ field }}"
+                           name="{{ field }}" min="0" max="100"
+                           placeholder="Enter marks" required>
                 </div>
                 {% endfor %}
 
@@ -76,37 +66,78 @@
             <div class="section-heading second-heading">
                 <span class="number">02</span>
                 <div>
-                    <h2>Aptitude & Personal Skills</h2>
-                    <p>Rate your abilities from 0 to 100.</p>
+                    <h2>Aptitude & Personality Assessment</h2>
+                    <p>Rate how much each statement describes you.</p>
                 </div>
             </div>
+
+            <p style="font-size:13px;color:#777d96;margin-bottom:20px;">
+                1 = Strongly Disagree | 2 = Disagree |
+                3 = Neutral | 4 = Agree | 5 = Strongly Agree
+            </p>
 
             <div class="input-grid">
 
                 <div class="input-group">
-                    <label>Analytical Thinking</label>
-                    <input type="number" name="analytical"
-                    min="0" max="100" placeholder="0 - 100" required>
+                    <label>1. I enjoy solving mathematical problems.</label>
+                    <input type="number" name="q1" min="1" max="5" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Creativity</label>
-                    <input type="number" name="creativity"
-                    min="0" max="100" placeholder="0 - 100" required>
+                    <label>2. I enjoy analysing information before making decisions.</label>
+                    <input type="number" name="q2" min="1" max="5" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Communication</label>
-                    <input type="number" name="communication"
-                    min="0" max="100" placeholder="0 - 100" required>
+                    <label>3. I enjoy finding logical solutions to difficult problems.</label>
+                    <input type="number" name="q3" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>4. I like understanding how things work.</label>
+                    <input type="number" name="q4" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>5. I enjoy coming up with original ideas.</label>
+                    <input type="number" name="q5" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>6. I enjoy creative activities and projects.</label>
+                    <input type="number" name="q6" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>7. I like exploring different ways to approach a task.</label>
+                    <input type="number" name="q7" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>8. I feel comfortable expressing my ideas to others.</label>
+                    <input type="number" name="q8" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>9. I enjoy working and communicating with people.</label>
+                    <input type="number" name="q9" min="1" max="5" required>
+                </div>
+
+                <div class="input-group">
+                    <label>10. I am good at explaining things clearly.</label>
+                    <input type="number" name="q10" min="1" max="5" required>
                 </div>
 
             </div>
 
+            <input type="hidden" name="analytical" id="analytical">
+            <input type="hidden" name="creativity" id="creativity">
+            <input type="hidden" name="communication" id="communication">
+
             <div class="notice">
-                <strong>Note:</strong>
-                Your results are educational guidance, not a
-                guaranteed prediction of future success.
+                <strong>Privacy and accuracy:</strong>
+                Your answers are used to generate educational
+                recommendations. Results are not guaranteed career outcomes.
             </div>
 
             <button type="submit" class="submit-btn">
@@ -114,7 +145,6 @@
             </button>
 
         </form>
-
     </section>
 
 </main>
@@ -122,6 +152,57 @@
 <footer>
     <p>PathFinder AI © 2026 | Intelligent Career Exploration</p>
 </footer>
+
+<script>
+function calculateAptitude() {
+
+    function getScore(numbers) {
+        const total = numbers.reduce((sum, n) => sum + n, 0);
+        return Math.round((total / numbers.length) * 20);
+    }
+
+    function getAnswers(start, end) {
+        const answers = [];
+
+        for (let i = start; i <= end; i++) {
+            const input = document.querySelector(
+                `[name="q${i}"]`
+            );
+
+            const value = Number(input.value);
+
+            if (!input.value || value < 1 || value > 5) {
+                alert("Please answer all 10 questions using 1 to 5.");
+                input.focus();
+                return null;
+            }
+
+            answers.push(value);
+        }
+
+        return answers;
+    }
+
+    const analytical = getAnswers(1, 4);
+    const creativity = getAnswers(5, 7);
+    const communication = getAnswers(8, 10);
+
+    if (!analytical || !creativity || !communication) {
+        return false;
+    }
+
+    document.getElementById("analytical").value =
+        getScore(analytical);
+
+    document.getElementById("creativity").value =
+        getScore(creativity);
+
+    document.getElementById("communication").value =
+        getScore(communication);
+
+    return true;
+}
+</script>
 
 </body>
 </html>

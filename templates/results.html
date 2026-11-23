@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Results | PathFinder AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">PathFinder <span>AI</span></div>
+    <div class="nav-label">YOUR ANALYSIS REPORT</div>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <span class="tag">ANALYSIS COMPLETED</span>
+        <h1>Your Future <span>Starts Here.</span></h1>
+        <p>
+            Our Random Forest Machine Learning model has analysed
+            your academic and aptitude scores.
+        </p>
+    </section>
+
+    <section class="form-card">
+
+        <div class="section-heading">
+            <span class="number">01</span>
+            <div>
+                <h2>Recommended Stream</h2>
+                <p>Your highest-ranked prediction.</p>
+            </div>
+        </div>
+
+        <div style="text-align:center; padding:25px 10px;">
+            <h1 style="font-size:38px;color:#6558e8;">
+                {{ prediction }}
+            </h1>
+            <p style="color:#858ba1;margin-top:10px;">
+                Your highest-ranked academic stream
+            </p>
+        </div>
+
+        <div class="section-heading second-heading">
+            <span class="number">02</span>
+            <div>
+                <h2>Stream Comparison</h2>
+                <p>Model probability estimates for each stream.</p>
+            </div>
+        </div>
+
+        <div style="max-width:550px;margin:20px auto;">
+            <canvas id="streamChart"></canvas>
+        </div>
+
+        <div style="margin-top:30px;">
+            {% for item in results %}
+            <div style="margin-bottom:20px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <strong>{{ item.stream }}</strong>
+                    <strong style="color:#6558e8;">
+                        {{ item.percentage }}%
+                    </strong>
+                </div>
+
+                <div style="height:10px;background:#eeeff5;border-radius:20px;">
+                    <div style="
+                        width:{{ item.percentage }}%;
+                        height:10px;
+                        background:#6558e8;
+                        border-radius:20px;">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="notice">
+            These percentages represent the model's estimated
+            probabilities, not guaranteed suitability or future success.
+            The model was trained on synthetic demonstration data.
+        </div>
+
+        <div class="section-heading second-heading">
+            <span class="number">03</span>
+            <div>
+                <h2>Explore Career Opportunities</h2>
+                <p>Some careers associated with your predicted stream.</p>
+            </div>
+        </div>
+
+        {% if prediction == "Science" %}
+        <div class="input-grid">
+            <div class="notice">
+                <strong>Engineering</strong>
+                <p>Explore engineering and technology fields.</p>
+            </div>
+            <div class="notice">
+                <strong>Medicine and Healthcare</strong>
+                <p>Explore healthcare and medical sciences.</p>
+            </div>
+            <div class="notice">
+                <strong>Scientific Research</strong>
+                <p>Explore biology, chemistry and physics research.</p>
+            </div>
+            <div class="notice">
+                <strong>Computer Science</strong>
+                <p>Explore software development and computing.</p>
+            </div>
+        </div>
+
+        {% elif prediction == "Commerce" %}
+        <div class="input-grid">
+            <div class="notice">
+                <strong>Accounting</strong>
+                <p>Explore accounting and auditing.</p>
+            </div>
+            <div class="notice">
+                <strong>Business Management</strong>
+                <p>Explore business administration and management.</p>
+            </div>
+            <div class="notice">
+                <strong>Finance</strong>
+                <p>Explore banking and financial services.</p>
+            </div>
+            <div class="notice">
+                <strong>Economics</strong>
+                <p>Explore economic research and analysis.</p>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="input-grid">
+            <div class="notice">
+                <strong>Law</strong>
+                <p>Explore legal studies and related careers.</p>
+            </div>
+            <div class="notice">
+                <strong>Psychology</strong>
+                <p>Explore human behaviour and psychology.</p>
+            </div>
+            <div class="notice">
+                <strong>Journalism</strong>
+                <p>Explore media and communication.</p>
+            </div>
+            <div class="notice">
+                <strong>Social Sciences</strong>
+                <p>Explore sociology and political science.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="notice">
+            <strong>Remember:</strong>
+            This is an educational demonstration tool. Consider your
+            interests, subject requirements and advice from teachers
+            before choosing an academic stream.
+        </div>
+
+        <a href="/" style="text-decoration:none;">
+            <button class="submit-btn" type="button">
+                ← Analyse Another Student
+            </button>
+        </a>
+
+    </section>
+
+</main>
+
+<footer>
+    <p>PathFinder AI © 2026 | Intelligent Career Exploration</p>
+</footer>
+
+<script>
+    const labels = {{ results | map(attribute='stream') | list | tojson }};
+    const values = {{ results | map(attribute='percentage') | list | tojson }};
+
+    new Chart(document.getElementById('streamChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Model probability (%)',
+                data: values,
+                backgroundColor: '#6558e8',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

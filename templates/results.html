@@ -22,22 +22,23 @@
         <span class="tag">ANALYSIS COMPLETED</span>
         <h1>Your Future <span>Starts Here.</span></h1>
         <p>
-            Our Random Forest Machine Learning model has analysed
-            your academic and aptitude scores.
+            Your academic performance and aptitude responses
+            have been analysed using our Machine Learning model.
         </p>
     </section>
 
     <section class="form-card">
 
+        <!-- RECOMMENDED STREAM -->
         <div class="section-heading">
             <span class="number">01</span>
             <div>
                 <h2>Recommended Stream</h2>
-                <p>Your highest-ranked prediction.</p>
+                <p>Your highest-ranked model prediction.</p>
             </div>
         </div>
 
-        <div style="text-align:center; padding:25px 10px;">
+        <div style="text-align:center;padding:25px 10px;">
             <h1 style="font-size:38px;color:#6558e8;">
                 {{ prediction }}
             </h1>
@@ -46,11 +47,12 @@
             </p>
         </div>
 
+        <!-- STREAM COMPARISON -->
         <div class="section-heading second-heading">
             <span class="number">02</span>
             <div>
                 <h2>Stream Comparison</h2>
-                <p>Model probability estimates for each stream.</p>
+                <p>Estimated probabilities produced by the model.</p>
             </div>
         </div>
 
@@ -69,32 +71,23 @@
                 </div>
 
                 <div style="height:10px;background:#eeeff5;border-radius:20px;">
-                    <div style="
-                        width:{{ item.percentage }}%;
-                        height:10px;
-                        background:#6558e8;
-                        border-radius:20px;">
-                    </div>
+                    <div style="width:{{ item.percentage }}%;height:10px;background:#6558e8;border-radius:20px;"></div>
                 </div>
             </div>
             {% endfor %}
         </div>
 
-        <div class="notice">
-            These percentages represent the model's estimated
-            probabilities, not guaranteed suitability or future success.
-            The model was trained on synthetic demonstration data.
-        </div>
-
+        <!-- CAREER OPPORTUNITIES -->
         <div class="section-heading second-heading">
             <span class="number">03</span>
             <div>
-                <h2>Explore Career Opportunities</h2>
-                <p>Some careers associated with your predicted stream.</p>
+                <h2>Career Opportunities</h2>
+                <p>Examples of careers related to your predicted stream.</p>
             </div>
         </div>
 
         {% if prediction == "Science" %}
+
         <div class="input-grid">
             <div class="notice">
                 <strong>Engineering</strong>
@@ -115,6 +108,7 @@
         </div>
 
         {% elif prediction == "Commerce" %}
+
         <div class="input-grid">
             <div class="notice">
                 <strong>Accounting</strong>
@@ -135,6 +129,7 @@
         </div>
 
         {% else %}
+
         <div class="input-grid">
             <div class="notice">
                 <strong>Law</strong>
@@ -153,13 +148,101 @@
                 <p>Explore sociology and political science.</p>
             </div>
         </div>
+
         {% endif %}
 
+        <!-- ADVANTAGES AND CHALLENGES -->
+        <div class="section-heading second-heading">
+            <span class="number">04</span>
+            <div>
+                <h2>Advantages & Challenges</h2>
+                <p>Understand some benefits and considerations of each stream.</p>
+            </div>
+        </div>
+
+        {% if prediction == "Science" %}
+
+        <div class="input-grid">
+            <div class="notice">
+                <strong>Advantages</strong>
+                <ul style="padding-left:18px;margin-top:10px;line-height:2;">
+                    <li>Opens pathways to engineering and healthcare.</li>
+                    <li>Develops analytical and problem-solving skills.</li>
+                    <li>Provides opportunities in scientific research.</li>
+                    <li>Can lead to technology-related careers.</li>
+                </ul>
+            </div>
+
+            <div class="notice">
+                <strong>Challenges</strong>
+                <ul style="padding-left:18px;margin-top:10px;line-height:2;">
+                    <li>Requires consistent study and practice.</li>
+                    <li>Includes complex scientific concepts.</li>
+                    <li>Some careers require lengthy higher education.</li>
+                    <li>May involve demanding practical work.</li>
+                </ul>
+            </div>
+        </div>
+
+        {% elif prediction == "Commerce" %}
+
+        <div class="input-grid">
+            <div class="notice">
+                <strong>Advantages</strong>
+                <ul style="padding-left:18px;margin-top:10px;line-height:2;">
+                    <li>Develops financial and business knowledge.</li>
+                    <li>Provides pathways into management and finance.</li>
+                    <li>Builds decision-making skills.</li>
+                    <li>Useful for understanding entrepreneurship.</li>
+                </ul>
+            </div>
+
+            <div class="notice">
+                <strong>Challenges</strong>
+                <ul style="padding-left:18px;margin-top:10px;line-height:2;">
+                    <li>Requires accuracy in calculations.</li>
+                    <li>Involves understanding economic concepts.</li>
+                    <li>Business environments can be competitive.</li>
+                    <li>Some careers require professional qualifications.</li>
+                </ul>
+            </div>
+        </div>
+
+        {% else %}
+
+        <div class="input-grid">
+            <div class="notice">
+                <strong>Advantages</strong>
+                <ul style="padding-left:18px;margin-top:10px;line-height:2;">
+                    <li>Develops communication and critical thinking.</li>
+                    <li>Encourages creativity and independent analysis.</li>
+                    <li>Provides pathways into law and social sciences.</li>
+                    <li>Builds understanding of society and culture.</li>
+                </ul>
+            </div>
+
+            <div class="notice">
+                <strong>Challenges</strong>
+                <ul style="padding-left:18px;margin-top:10px;line-height:2;">
+                    <li>Often requires extensive reading.</li>
+                    <li>Involves writing and presenting arguments.</li>
+                    <li>Some careers require additional qualifications.</li>
+                    <li>Research and interpretation can be demanding.</li>
+                </ul>
+            </div>
+        </div>
+
+        {% endif %}
+
+        <!-- DISCLAIMER -->
         <div class="notice">
-            <strong>Remember:</strong>
-            This is an educational demonstration tool. Consider your
-            interests, subject requirements and advice from teachers
-            before choosing an academic stream.
+            <strong>Important Information:</strong>
+            These recommendations are generated using a Machine Learning
+            model trained on synthetic demonstration data. The percentages
+            are model probability estimates, not scientifically validated
+            measures of student suitability. Career paths depend on
+            individual interests, qualifications and future choices.
+            Consult teachers and career counsellors before making decisions.
         </div>
 
         <a href="/" style="text-decoration:none;">

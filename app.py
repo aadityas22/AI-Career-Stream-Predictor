@@ -5,25 +5,26 @@ import os
 
 app = Flask(__name__)
 
-# Load the trained machine learning model
 MODEL_PATH = "models/career_model.pkl"
 
-def load_model():
-    if not os.path.exists(MODEL_PATH):
-        raise FileNotFoundError(
-            "AI model not found. Run train_model.py first."
-        )
-
-    return joblib.load(MODEL_PATH)
-
-
-# Student input fields
+# Features expected by the trained model
 FEATURES = [
     "math", "physics", "chemistry", "biology",
     "english", "accounting", "business",
     "economics", "history", "geography",
     "analytical", "creativity", "communication"
 ]
+
+
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(
+            "AI model is missing. Please train the model first."
+        )
+
+    saved_data = joblib.load(MODEL_PATH)
+
+    return saved_data["model"], saved_data["features"]
 
 
 @app.route("/")
@@ -35,20 +36,28 @@ def home():
 def predict():
 
     try:
-        # Collect student information
         student_data = []
 
+        # Validate all student inputs
         for feature in FEATURES:
-            value = float(request.form.get(feature, ""))
+
+            raw_value = request.form.get(feature, "").strip()
+
+            if not raw_value:
+                return f"Missing input: {feature}", 400
+
+            value = float(raw_value)
 
             if not 0 <= value <= 100:
-                return "All scores must be between 0 and 100.", 400
+                return f"{feature} must be between 0 and 100.", 400
 
             student_data.append(value)
 
-        # Load trained AI model
-        saved_data = load_model()
-        model = saved_data["model"]
+        # Load the trained model
+        model, model_features = load_model()
+
+        if model_features != FEATURES:
+            return "Model feature configuration mismatch.", 500
 
         # Generate prediction
         student_array = np.array([student_data])
@@ -57,18 +66,17 @@ def predict():
 
         probabilities = model.predict_proba(student_array)[0]
 
-        # Get confidence percentages
+        # Prepare probability results
         results = []
 
         for stream, probability in zip(
             model.classes_, probabilities
         ):
             results.append({
-                "stream": stream,
-                "percentage": round(probability * 100, 2)
+                "stream": str(stream),
+                "percentage": round(float(probability) * 100, 2)
             })
 
-        # Sort from highest to lowest
         results.sort(
             key=lambda item: item["percentage"],
             reverse=True
@@ -86,9 +94,10 @@ def predict():
     except FileNotFoundError as error:
         return str(error), 500
 
-    except Exception as error:
-        return f"An error occurred: {error}", 500
+    except Exception:
+        app.logger.exception("Prediction failed")
+        return "Something went wrong while generating your prediction.", 500
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
